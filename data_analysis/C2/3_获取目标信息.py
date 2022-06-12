@@ -2,7 +2,7 @@
 # encoding: utf-8
 """
 @Name: 3_获取目标信息.py
-@Auth: huxiaoting01@baidu.com
+@Auth: ciel7
 @Date: 2022/6/12-下午5:49
 @Desc: 
 @Ver : 

@@ -2,7 +2,7 @@
 # encoding: utf-8
 """
 @Name: 1_Requests入门.py
-@Auth: huxiaoting01@baidu.com
+@Auth: ciel7
 @Date: 2022/6/11-下午5:20
 @Desc: 
 @Ver : 
