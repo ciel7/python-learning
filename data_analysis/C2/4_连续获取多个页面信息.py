@@ -9,6 +9,6 @@
 """
 
 import requests
-from bs4 import BeautifulSo
+from bs4 import BeautifulSoup
 
 
