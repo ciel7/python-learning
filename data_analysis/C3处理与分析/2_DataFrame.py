@@ -46,3 +46,15 @@ print(df[(df['one'] > 0) & (df['two'] > 0)])
 print('---------------- 精准查询 -------------------')
 print(df[df['one'] == 0])
 print(df[df['one'] != 3])
+
+title = pd.Series(['泰坦尼克号', '阿甘正传', '少年的你', '霸王别姬'])
+average = pd.Series([9.4, 9.5, 8.3, 9.6])
+votes = pd.Series([1521458, 1568419, 1084448, 1538556])
+genre = pd.Series([['剧情', '爱情'], ['剧情', '励志'], ['剧情'], ['剧情']])
+
+d1 = {'title': title, 'average': average, 'votes': votes, 'genre': genre}
+df1 = pd.DataFrame(d1)
+
+print('选取第2行且列标签为 title 的数据')
+print(df1.iloc[2].loc['title'])
+
