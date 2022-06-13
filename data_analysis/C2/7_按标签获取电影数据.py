@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-@Name: 5_整合爬虫功能函数.py
+@Name: 7_按标签获取电影数据.py
 @Auth: ciel7
-@Date: 2022/6/13-上午11:17
+@Date: 2022/6/13-下午2:26
 @Desc: 
 @Ver : 
 """
@@ -12,10 +12,12 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
+url = 'https://movie.douban.com/j/new_search_subjects?sort=U&range=0,10&tags=&start=0'
+headers = {'user-agent': 'my-app/0.0.1'}
+movie_lists = []
 movie_links = []
 movie_names = []
 all_infos = []
-headers = {'user-agent': 'my-app/0.0.1'}
 
 
 def get_list(soup_list):
@@ -30,30 +32,38 @@ def get_list(soup_list):
     return lists
 
 
-# 1.访问主页面，并且完成页面的跳转，跳转页面（https://movie.douban.com/top250?start=0&filter=）
-def get_page(page_link):
+# 1.访问主页面，并且完成页面的跳转
+def get_page(page_link, tags, genres):
     page = 0
-    size = 25
-    max_page = 225  # start 参数对应的值
+    size = 20
+    max_page = 100  # start 参数对应的值
 
     while page <= max_page:
-        # 组织 url
-        # url = "https://movie.douban.com/top250?start=" + str(page) + "&filter="
-        url = page_link + "?start=" + page.__str__() + "&filter="
+        url = page_link + "?start=" + page.__str__() + "&tags=" + tags + "&genres=" + genres
+
+        print(url)
         response = requests.get(url=url, headers=headers)
-        get_links(response)
+        movie_info = response.text
+
+        print(movie_info)
+        exit()
+        # 将获取到的 string 转为字典, eval() === dict()
+        movie_info = eval(movie_info)
+
+        # 将字典里的数据，转储到列表中
+        for m in movie_info['data']:
+            # m 是字典类型的数据
+            movie_lists.append(m)
+            # 处理 url，将 \/ 替换为 /
+            url_str= m.get('url')
+            url_str.replace('\/', '/')
+            movie_links.append(m.get('url'))
+
         # 修改 start 参数
         page += size
 
+        print(url)
 
-# 2.抓取每个页面所有的电影链接
-def get_links(response):
-    # 访问每个页面，实现电影单链信息的获取
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    for ele in soup.find_all(class_="hd"):
-        movie_names.append(ele.find(class_="title").text)
-        movie_links.append(ele.find('a', href=True).attrs['href'])
 
 
 # 3.根据电影链接，获取电影基本信息、评分信息
@@ -121,15 +131,38 @@ def get_infos(url):
     all_infos.append(movie_info)
 
 
+# 模拟登录，爬取次数多，被限制了
+def login():
+    get_url = 'https://www.douban.com/people/258010830/'
+    header = {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Mobile Safari/537.36',
+    }
+    url = 'https://accounts.douban.com/j/mobile/login/basic'
+    data = {
+        'remember': 'true',
+        'username': '15503643123',
+        'password': 'Hunan19970708.'
+    }
+    session = requests.Session()
+    resopnse = session.post(url, headers=header, data=data)
+    new_response = session.get(get_url, headers=header)
+    if new_response.status_code == 200:
+        with open('new-html.html', 'wb')as f:
+            f.write(new_response.content)
+            f.close()
+    else:
+        print('登录错误')
+
 if __name__ == '__main__':
+    login()
+    exit()
     # 1. 调用 get_page 实现页面的访问
-    get_page(page_link="https://movie.douban.com/top250")
+    get_page(page_link="https://movie.douban.com/j/new_search_subjects?sort=U&range=0,10&tags=", tags="电影", genres="动画")
 
-    # 获取每个页面信息 ---> 调用获取页面所有电影链接 ---> for 循环，调用获取信息的功能
-    for name, link in zip(movie_names, movie_links):
-        get_infos(link)
-
-    print(all_infos)
-    # 将电影信息转为二维表，并存到电子表格中
-    data = pd.DataFrame(all_infos)
-    data.to_excel("豆瓣250部高分电影.xlsx")
+    # 调用获取详细信息的方法
+    for link in movie_links:
+        print("正在抓取电影：", link)
+        get_infos(url=link)
+    # 拿到电影信息，list.append存储容器，list > dataFrame > to_excel()
+    data = pd.DataFrame(movie_lists)
+    data.to_excel("豆瓣动画电影.xlsx")
