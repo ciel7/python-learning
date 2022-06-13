@@ -78,8 +78,16 @@ def get_infos(url):
 
         # 编剧
         writer = soup.find_all(class_="attrs")
+        # 相比 5_整合爬虫功能函数.py 有代码优化
+        # if len(writer) > 1:
+        #     movie_info['writer'] = soup.find_all(class_="attrs")[1].text
+        # else:
+        #     movie_info['writer'] = ""
+        # print(writer)
+        # print(len(writer))
+        # print(get_list(soup.find_all(class_="attrs")[1].find_all('a')))
         if len(writer) > 1:
-            movie_info['writer'] = soup.find_all(class_="attrs")[1].text
+            movie_info['writer'] = get_list(soup.find_all(class_="attrs")[1].find_all('a'))
         else:
             movie_info['writer'] = ""
 
@@ -100,6 +108,7 @@ def get_infos(url):
         # 评分部分
         movie_info['average'] = soup.find(property="v:average").text
         movie_info['votes'] = soup.find(property="v:votes").text
+        movie_info['link'] = url
 
         # 打印电影信息
         for key in movie_info:
