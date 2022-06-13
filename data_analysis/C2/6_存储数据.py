@@ -111,10 +111,6 @@ def get_infos(url):
     # 电影信息存到列表中
     all_infos.append(movie_info)
 
-    # 将电影信息转为二维表，并存到电子表格中
-    data = pd.DataFrame(all_infos)
-    data.to_excel("豆瓣250部高分电影.xlsx")
-
 
 if __name__ == '__main__':
     # 1. 调用 get_page 实现页面的访问
@@ -123,3 +119,7 @@ if __name__ == '__main__':
     # 获取每个页面信息 ---> 调用获取页面所有电影链接 ---> for 循环，调用获取信息的功能
     for name, link in zip(movie_names, movie_links):
         get_infos(link)
+
+    # 将电影信息转为二维表，并存到电子表格中
+    data = pd.DataFrame(all_infos)
+    data.to_excel("豆瓣250部高分电影.xlsx")
