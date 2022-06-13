@@ -7,6 +7,8 @@
 @Desc: 
 @Ver : 
 """
+import os
+from datetime import time
 
 import requests
 from bs4 import BeautifulSoup
@@ -17,7 +19,7 @@ headers = {'user-agent': 'my-app/0.0.1'}
 movie_lists = []
 movie_links = []
 movie_names = []
-all_infos = []
+# all_infos = []
 
 
 def get_list(soup_list):
@@ -41,12 +43,10 @@ def get_page(page_link, tags, genres):
     while page <= max_page:
         url = page_link + "?start=" + page.__str__() + "&tags=" + tags + "&genres=" + genres
 
-        print(url)
+        print('当前 URL: ', url)
         response = requests.get(url=url, headers=headers)
         movie_info = response.text
 
-        print(movie_info)
-        exit()
         # 将获取到的 string 转为字典, eval() === dict()
         movie_info = eval(movie_info)
 
@@ -59,11 +59,21 @@ def get_page(page_link, tags, genres):
             url_str.replace('\/', '/')
             movie_links.append(m.get('url'))
 
+        # 调用获取详细信息的方法
+        movie_list_new = []
+        for l in movie_links:
+            time.sleep(3)
+            movie = get_infos(url=l)
+            print("已获取电影：", movie['title'])
+            movie_list_new.append(movie)
+
+        # 存 csv
+        save_csv(movie_list_new)
+
         # 修改 start 参数
         page += size
 
         print(url)
-
 
 
 # 3.根据电影链接，获取电影基本信息、评分信息
@@ -128,41 +138,32 @@ def get_infos(url):
         print("电影已下架")
 
     # 电影信息存到列表中
-    all_infos.append(movie_info)
+    # all_infos.append(movie_info)
+
+    return movie_info
 
 
-# 模拟登录，爬取次数多，被限制了
-def login():
-    get_url = 'https://www.douban.com/people/258010830/'
-    header = {
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Mobile Safari/537.36',
-    }
-    url = 'https://accounts.douban.com/j/mobile/login/basic'
-    data = {
-        'remember': 'true',
-        'username': '15503643123',
-        'password': 'Hunan19970708.'
-    }
-    session = requests.Session()
-    resopnse = session.post(url, headers=header, data=data)
-    new_response = session.get(get_url, headers=header)
-    if new_response.status_code == 200:
-        with open('new-html.html', 'wb')as f:
-            f.write(new_response.content)
-            f.close()
+def save_csv(movies):
+    """
+    :param movies:
+    :return:
+    """
+    data = pd.DataFrame(movies)
+    file = "movie_data.csv"
+    if os.path.exists(file):
+        data.to_csv(file, mode='a', header=False)
     else:
-        print('登录错误')
+        data.to_csv(file)
+    print("\n ---------------- 存储成功：", data.tail(1)['title'])
 
 if __name__ == '__main__':
-    login()
-    exit()
     # 1. 调用 get_page 实现页面的访问
     get_page(page_link="https://movie.douban.com/j/new_search_subjects?sort=U&range=0,10&tags=", tags="电影", genres="动画")
 
     # 调用获取详细信息的方法
-    for link in movie_links:
-        print("正在抓取电影：", link)
-        get_infos(url=link)
-    # 拿到电影信息，list.append存储容器，list > dataFrame > to_excel()
-    data = pd.DataFrame(movie_lists)
-    data.to_excel("豆瓣动画电影.xlsx")
+    # for link in movie_links:
+    #     print("正在抓取电影：", link)
+    #     get_infos(url=link)
+    # # 拿到电影信息，list.append存储容器，list > dataFrame > to_excel()
+    # data = pd.DataFrame(movie_lists)
+    # data.to_excel("豆瓣动画电影.xlsx")
