@@ -52,9 +52,13 @@ average = pd.Series([9.4, 9.5, 8.3, 9.6])
 votes = pd.Series([1521458, 1568419, 1084448, 1538556])
 genre = pd.Series([['剧情', '爱情'], ['剧情', '励志'], ['剧情'], ['剧情']])
 
-d1 = {'title': title, 'average': average, 'votes': votes, 'genre': genre}
-df1 = pd.DataFrame(d1)
+# d1 = {'title': title, 'average': average, 'votes': votes, 'genre': genre}
+# df1 = pd.DataFrame(d1)
 
+df1 = pd.DataFrame(list(zip(title, average, votes, genre)), columns=['title', 'average', 'votes', 'genre'])
 print('选取第2行且列标签为 title 的数据')
 print(df1.iloc[2].loc['title'])
-
+# 读取 X 列 Y 行
+x = 'title'
+y = 2
+print(df1[x].iloc[y])
