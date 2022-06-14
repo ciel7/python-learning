@@ -30,3 +30,13 @@ data = pd.read_csv('../data/movie_data_cleaned.csv')
 print(data[['title', 'genre']])
 # 满足行列双重条件
 print(data.loc[data['average'] == 9.7, ['title', 'genre']])
+
+# 评分最高前5
+print(data[['title', 'average', 'votes']].sort_values('average', ascending=False).head(5))
+
+# 评价人数最多前5
+print(data[['title', 'average', 'votes']].sort_values('votes', ascending=False).head(5))
+
+# 两者兼具前10
+print(data[['title', 'average', 'votes']].sort_values(['average', 'votes'], ascending=False).head(10))
+
