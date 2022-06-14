@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-@Name: 5_数据运算：按年统计、时间聚合.py
+@Name: 6_数据运算：类型统计.py
 @Auth: ciel7
 @Date: 2022/6/14-下午7:43
 @Desc: 

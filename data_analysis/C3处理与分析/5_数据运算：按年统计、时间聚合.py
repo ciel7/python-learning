@@ -28,6 +28,7 @@ print(data.head(3)['release_date'])
 # 替换索引（Only valid with DatetimeIndex, TimedeltaIndex or PeriodIndex）
 data['release_date'] = pd.to_datetime(data['release_date'])
 data = data.set_index(data['release_date'])
+# resample(时间单位).count()
 data_year_tj = data['release_date'].resample('Y').count()
 
 # 打印统计数据
