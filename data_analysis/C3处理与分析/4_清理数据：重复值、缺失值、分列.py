@@ -17,7 +17,7 @@ pd.set_option('display.max_rows', None)
 # 设置数据的显示长度，默认为 50
 pd.set_option('max_colwidth', 30)
 
-data = pd.read_csv("../data/movie_data.csv", usecols=['average', 'genre', 'language', 'release_date', 'title', 'votes'])
+data = pd.read_csv("../data/movie_data.csv", usecols=['average', 'genre', 'country', 'language', 'release_date', 'title', 'votes'])
 # print(data)
 
 # 根据title：查重、去重
