@@ -4,7 +4,7 @@
 @Name: 6_饼图:电影语种统计.py
 @Auth: ciel7
 @Date: 2022/6/16-下午11:23
-@Desc: 
+@Desc: 如何理解散点图：相关性，是否存在趋势？不同区域隐含的信息
 @Ver : 
 """
 import sys
@@ -15,24 +15,21 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-data = pdef.language_tj()
+plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
+
+data = pdef.average_votes()
 
 print(data.head(1))
 
-# 对数据进行排序
-data = data.sort_values('tj', ascending=False)
+plt.scatter(x=data['average'], y=data['votes'])
+title = len(data).__str__() + " 部电影评分分值与人数"
+plt.title(title)
+plt.xlabel('评分分值')
+plt.ylabel('评价人数')
+plt.grid()
 
-# 绘制饼图
-plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
-
-data = data[0:9]
-# 类别数据
-labels = data.index
-sizes = data['tj'].tolist()
-
-plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=False, startangle=90)
-plt.axis('equal')
-plt.title('电影语种统计')
-
-plt.legend(title="language", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
 plt.show()
+
+# 筛选、排序 --> 结合图表，观察数据
+print("-------------  高分热门电影  --------------------")
+print(data.sort_values(['votes', 'average'], ascending=False).head(20))
